@@ -6,8 +6,10 @@ import neynarClient from "../../neynarClient";
  * One way to do this is to use a neynar webhook.
  */
 export async function POST(req: NextRequest, res: NextResponse) {
-  if (!process.env.SIGNER_UUID) {
-    throw new Error("Make sure you set SIGNER_UUID in your .env file");
+  if (!process.env.SIGNER_UUID || !process.env.NEYNAR_API_KEY) {
+    throw new Error(
+      "Make sure you set SIGNER_UUID and NEYNAR_API_KEY in your .env file"
+    );
   }
 
   const webhookSecret = req.nextUrl.searchParams.get("secret");
@@ -15,8 +17,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return NextResponse.json({ message: "invalid webhook" }, { status: 401 });
   }
 
-  const body = await req.text();
-  const hookData = JSON.parse(body);
+  const hookData = await req.json();
 
   const reply = await neynarClient.publishCast(
     process.env.SIGNER_UUID,
