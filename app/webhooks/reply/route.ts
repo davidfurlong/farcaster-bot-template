@@ -35,7 +35,11 @@ export async function POST(req: NextRequest, res: NextResponse) {
     throw new Error("Invalid webhook signature");
   }
 
-  const hookData = JSON.parse(body);
+  const hookData = JSON.parse(body) as {
+    created_at: number;
+    type: "cast.created";
+    data: CastV2;
+  };
 
   const reply = await neynarClient.publishCast(
     process.env.SIGNER_UUID,
