@@ -8,7 +8,6 @@ import { createHmac } from "crypto";
  */
 export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.text();
-  console.log("body:", body);
 
   const webhookSecret = process.env.NEYNAR_WEBHOOK_SECRET;
 
@@ -30,8 +29,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const hmac = createHmac("sha512", webhookSecret);
   hmac.update(body);
   const generatedSignature = hmac.digest("hex");
-  console.log("generatedSignature:", generatedSignature);
-  console.log("sig:", sig);
 
   const isValid = generatedSignature === sig;
   if (!isValid) {
