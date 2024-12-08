@@ -2,16 +2,18 @@ This is a template for a Farcaster bot that uses neynar webhooks and a next.js s
 
 ## Getting Started
 
-First, run the development server:
+First, copy the `.env.sample` file to `.env` and fill in the values.
+
+Then, install dependencies. You may need node and yarn installed on your machine.
 
 ```bash
-npm run dev
-# or
+yarn install
+```
+
+Then, run the development server:
+
+```bash
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
