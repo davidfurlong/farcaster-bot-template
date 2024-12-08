@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import neynarClient from "../../neynarClient";
-import { Cast as CastV2 } from "@neynar/nodejs-sdk/build/neynar-api/v2/openapi-farcaster/models/cast.js";
 import { createHmac } from "crypto";
+import { Cast } from "@neynar/nodejs-sdk/build/api";
+import { generateAIResponse } from "@/app/ai";
 /**
  * Post to /webhooks/reply?secret=.... with body type: { data: { author: { username: string }, hash: string } }
  * One way to do this is to use a neynar webhook.
@@ -38,16 +39,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const hookData = JSON.parse(body) as {
     created_at: number;
     type: "cast.created";
-    data: CastV2;
+    data: Cast;
   };
 
-  const reply = await neynarClient.publishCast(
-    process.env.SIGNER_UUID,
-    `gm ${hookData.data.author.username}`,
-    {
-      replyTo: hookData.data.hash,
-    }
-  );
+  const text = await generateAIResponse(hookData.data);
+
+  const reply = await neynarClient.publishCast({
+    signerUuid: process.env.SIGNER_UUID,
+    text: text,
+    parent: hookData.data.hash,
+  });
   console.log("reply:", reply);
 
   return NextResponse.json({
